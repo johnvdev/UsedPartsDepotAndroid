@@ -47,9 +47,9 @@ public class SpinnerSetter {
             String url = "https://www.carqueryapi.com/api/0.3/";
             HashMap<String,String> params = new HashMap<>();
             params.put("cmd","getYears");
-            OkHttpRequest req = new OkHttpRequest(params,url );
+            OkHttpRequest req = new OkHttpRequest();
             try{
-                response = new JSONObject(req.Get()).getJSONObject("Years");
+                response = new JSONObject(req.Get(params,url )).getJSONObject("Years");
 
                 int minYear = Integer.parseInt(response.getString("min_year"));
                 int maxYear = Integer.parseInt(response.getString("max_year"));
@@ -92,9 +92,9 @@ public class SpinnerSetter {
             HashMap<String,String> params = new HashMap<>();
             params.put("cmd","getMakes");
             params.put("year",this.year);
-            OkHttpRequest req = new OkHttpRequest(params,url );
+            OkHttpRequest req = new OkHttpRequest();
             try{
-                response = new JSONObject(req.Get()).getJSONArray("Makes");
+                response = new JSONObject(req.Get(params,url )).getJSONArray("Makes");
 
                 for (int i = 0; i < response.length(); i++) {
                      list.add(response.getJSONObject(i).getString("make_display"));
@@ -133,9 +133,9 @@ public class SpinnerSetter {
             HashMap<String,String> params = new HashMap<>();
             params.put("cmd","getModels");
             params.put("make",this.make);
-            OkHttpRequest req = new OkHttpRequest(params,url );
+            OkHttpRequest req = new OkHttpRequest( );
             try{
-                response = new JSONObject(req.Get()).getJSONArray("Models");
+                response = new JSONObject(req.Get(params,url)).getJSONArray("Models");
 
                 for (int i = 0; i < response.length(); i++) {
                     list.add(response.getJSONObject(i).getString("model_name"));
@@ -180,9 +180,9 @@ public class SpinnerSetter {
             params.put("year",this.year);
             params.put("make",this.make);
             params.put("model",this.model);
-            OkHttpRequest req = new OkHttpRequest(params,url );
+            OkHttpRequest req = new OkHttpRequest( );
             try{
-                response = new JSONObject(req.Get()).getJSONArray("Trims");
+                response = new JSONObject(req.Get(params,url)).getJSONArray("Trims");
 
                 for (int i = 0; i < response.length(); i++) {
                     String trim = response.getJSONObject(i).getString("model_trim");

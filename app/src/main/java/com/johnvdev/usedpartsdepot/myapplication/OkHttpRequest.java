@@ -5,25 +5,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class OkHttpRequest {
     OkHttpClient client = new OkHttpClient();
-    HashMap<String,String> parameters;
-    String reqUrl;
 
-    OkHttpRequest(HashMap<String,String> params, String url)
-    {
-        this.parameters = params;
-        this.reqUrl = url;
-    }
 
-    public String Get()
+
+    public String Get(HashMap<String,String> params, String uri)
     {
+        HashMap<String,String> parameters = new HashMap<String,String>();
+
         try {
-            HttpUrl.Builder urlBuilder = HttpUrl.parse(reqUrl).newBuilder();
+            HttpUrl.Builder urlBuilder = HttpUrl.parse(uri).newBuilder();
 
             for (Map.Entry<String, String> entry : parameters.entrySet()) {
                 String key = entry.getKey();
@@ -43,5 +42,16 @@ public class OkHttpRequest {
         {
             return e.toString();
         }
+    }
+    public String Post(String url, String json) throws IOException
+    {
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create(JSON, json);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+        Response response = client.newCall(request).execute();
+        return response.body().string();
     }
 }
