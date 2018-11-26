@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.VoiceInteractor;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -25,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -44,6 +46,7 @@ public class PartsDepot extends AppCompatActivity {
     Activity activity;
     List<ListPart> partList;
     Button Filter;
+    SharedPreferences preferences;
 
     private static PartsDepot mInstance;
 
@@ -57,6 +60,8 @@ public class PartsDepot extends AppCompatActivity {
         setContentView(R.layout.activity_parts_depot);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        preferences =  getSharedPreferences("Prefs", MODE_PRIVATE);
+
 
 
 
@@ -104,6 +109,11 @@ public class PartsDepot extends AppCompatActivity {
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(new NavigationChange());
+        View hView =  navigationView.getHeaderView(0);
+        TextView fname = (TextView)hView.findViewById(R.id.txtUserFirst);
+        TextView email = (TextView)hView.findViewById(R.id.txtUserEmail);
+        email.setText(preferences.getString("emailKey","Missing"));
+        fname.setText(preferences.getString("nameKey","Missing"));
 
 
         partList = new ArrayList<>();
@@ -218,12 +228,11 @@ public class PartsDepot extends AppCompatActivity {
         Spinner year = (Spinner)findViewById(R.id.spYear);
         Spinner make = (Spinner)findViewById(R.id.spMake);
         Spinner model = (Spinner)findViewById(R.id.spModel);
-        Spinner trim = (Spinner)findViewById(R.id.spTrim);
+
 
         year.setOnItemSelectedListener(new spinnerOnSelect());
         make.setOnItemSelectedListener(new spinnerOnSelect());
         model.setOnItemSelectedListener(new spinnerOnSelect());
-        trim.setOnItemSelectedListener(new spinnerOnSelect());
     }
 
     @Override
@@ -321,13 +330,6 @@ public class PartsDepot extends AppCompatActivity {
                         userIsInteracting = false;
                         break;
                     case R.id.spModel:
-                        String year = ((Spinner)findViewById(R.id.spYear)).getSelectedItem().toString();
-                        String make = ((Spinner)findViewById(R.id.spMake)).getSelectedItem().toString();
-                        new SpinnerSetter(activity).SetTrim(year,make, sp.getSelectedItem().toString());
-                        userIsInteracting = false;
-                        break;
-                    case R.id.spTrim:
-                        // offer 2 related code
                         break;
                     default:
                         break;

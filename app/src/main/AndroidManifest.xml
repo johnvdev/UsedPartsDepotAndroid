@@ -29,6 +29,10 @@
             android:name=".DummyLogin"
             android:label="Login"
             android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".DummyRegister"
+            android:label="Register"
+            android:parentActivityName=".DummyLogin"/>
 
 
         <activity

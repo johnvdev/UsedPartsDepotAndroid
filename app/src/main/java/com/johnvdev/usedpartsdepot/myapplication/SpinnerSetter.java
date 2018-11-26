@@ -34,10 +34,6 @@ public class SpinnerSetter {
     {
         new SetModel(model).execute();
     }
-    void SetTrim(String year,String model, String trim)
-    {
-        new SetTrim(year, model, trim ).execute();
-    }
 
      private class setYear extends AsyncTask<String, String, String>{
          List<String> list = new ArrayList<String>();
@@ -117,7 +113,7 @@ public class SpinnerSetter {
         }
     }
 
-    private  class SetModel extends AsyncTask<String, String, String>{
+    private  class SetModel extends AsyncTask<String, String, String> {
         private String make;
         List<String> list = new ArrayList<String>();
 
@@ -128,20 +124,20 @@ public class SpinnerSetter {
 
         @Override
         protected String doInBackground(String... voids) {
-            JSONArray response ;
+            JSONArray response;
             String url = "https://www.carqueryapi.com/api/0.3/";
-            HashMap<String,String> params = new HashMap<>();
-            params.put("cmd","getModels");
-            params.put("make",this.make);
-            OkHttpRequest req = new OkHttpRequest( );
-            try{
-                response = new JSONObject(req.Get(params,url)).getJSONArray("Models");
+            HashMap<String, String> params = new HashMap<>();
+            params.put("cmd", "getModels");
+            params.put("make", this.make);
+            OkHttpRequest req = new OkHttpRequest();
+            try {
+                response = new JSONObject(req.Get(params, url)).getJSONArray("Models");
 
                 for (int i = 0; i < response.length(); i++) {
                     list.add(response.getJSONObject(i).getString("model_name"));
 
                 }
-            }catch(Exception e){
+            } catch (Exception e) {
 
             }
             return null;
@@ -150,7 +146,7 @@ public class SpinnerSetter {
         @Override
         protected void onPostExecute(String s) {
             final ArrayAdapter<String> adapter = new ArrayAdapter<String>(mActivity, R.layout.spinner_item, list);
-            final Spinner years = ((Spinner)mActivity.findViewById(R.id.spModel));
+            final Spinner years = ((Spinner) mActivity.findViewById(R.id.spModel));
             years.setAdapter(adapter);
             super.onPostExecute(s);
 
@@ -158,58 +154,4 @@ public class SpinnerSetter {
         }
     }
 
-    private  class SetTrim extends AsyncTask<String, String, String>{
-        private String year;
-        private String make;
-        private String model;
-        List<String> list = new ArrayList<String>();
-
-        public SetTrim(String year ,String make, String model) {
-            this.year = year;
-            this.make = make;
-            this.model = model;
-        }
-
-
-        @Override
-        protected String doInBackground(String... voids) {
-            JSONArray response ;
-            String url = "https://www.carqueryapi.com/api/0.3/";
-            HashMap<String,String> params = new HashMap<>();
-            params.put("cmd","getTrims");
-            params.put("year",this.year);
-            params.put("make",this.make);
-            params.put("model",this.model);
-            OkHttpRequest req = new OkHttpRequest( );
-            try{
-                response = new JSONObject(req.Get(params,url)).getJSONArray("Trims");
-
-                for (int i = 0; i < response.length(); i++) {
-                    String trim = response.getJSONObject(i).getString("model_trim");
-                    if(trim =="")
-                    {
-                        list.add("N/A");
-                    }
-                    else
-                    {
-                        list.add(trim);
-                    }
-
-                }
-            }catch(Exception e){
-
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            final ArrayAdapter<String> adapter = new ArrayAdapter<String>(mActivity, R.layout.spinner_item, list);
-            final Spinner years = ((Spinner)mActivity.findViewById(R.id.spTrim));
-            years.setAdapter(adapter);
-            super.onPostExecute(s);
-
-
-        }
-    }
 }

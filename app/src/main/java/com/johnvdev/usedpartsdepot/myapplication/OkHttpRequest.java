@@ -19,7 +19,8 @@ public class OkHttpRequest {
 
     public String Get(HashMap<String,String> params, String uri)
     {
-        HashMap<String,String> parameters = new HashMap<String,String>();
+        HashMap<String,String> parameters = params;
+
 
         try {
             HttpUrl.Builder urlBuilder = HttpUrl.parse(uri).newBuilder();
@@ -43,15 +44,50 @@ public class OkHttpRequest {
             return e.toString();
         }
     }
-    public String Post(String url, String json) throws IOException
+    public int Post(String url,HashMap<String,String> params, String Body) throws IOException
     {
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-        RequestBody body = RequestBody.create(JSON, json);
+        RequestBody body = RequestBody.create(JSON, Body);
+
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
+
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            urlBuilder.addQueryParameter(key, value);
+        }
+
+        String uri = urlBuilder.build().toString();
+
+
         Request request = new Request.Builder()
-                .url(url)
+                .url(uri)
                 .post(body)
                 .build();
         Response response = client.newCall(request).execute();
-        return response.body().string();
+        return response.code();
+    }
+
+    public Response Put(String uri,HashMap<String,String> params, String Body) throws IOException
+    {
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create(JSON, Body);
+
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(uri).newBuilder();
+
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            urlBuilder.addQueryParameter(key, value);
+        }
+
+        String url = urlBuilder.build().toString();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .put(body)
+                .build();
+        Response response = client.newCall(request).execute();
+        return response;
     }
 }
