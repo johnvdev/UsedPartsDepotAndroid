@@ -128,7 +128,13 @@ public class AddVehicle extends AppCompatActivity {
             super.onPostExecute(s);
             if(resp == 200)
             {
-                Toast toast = Toast.makeText(activity,"Vehicle Added", Toast.LENGTH_LONG);
+                Intent intentMain = new Intent(AddVehicle.this,
+                        MyVehicles.class);
+                AddVehicle.this.startActivity(intentMain);
+            }
+            else
+            {
+                Toast toast = Toast.makeText(activity,"Please Try Again", Toast.LENGTH_LONG);
                 toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
             }
