@@ -19,6 +19,7 @@ import org.json.JSONException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,7 +53,7 @@ public class DummyRegister extends AppCompatActivity {
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
                 LocalDate localDate = LocalDate.now();
 
-                Register reg = new Register(email.getText().toString(), fName.getText().toString(), lName.getText().toString(),password.getText().toString(), dtf.format(localDate));
+                Register reg = new Register(email.getText().toString(),password.getText().toString(), fName.getText().toString(), lName.getText().toString(), dtf.format(localDate));
                 reg.execute();
 
             }
@@ -78,8 +79,8 @@ public class DummyRegister extends AppCompatActivity {
             OkHttpRequest req = new OkHttpRequest();
             Gson gson = new Gson();
             try{
-
-                resp = req.Post(url,null, gson.toJson(user));
+                HashMap<String,String> hm = new HashMap<>();
+                resp = req.Post(url,hm, gson.toJson(user));
 
             }catch(Exception e){
                 e.printStackTrace();

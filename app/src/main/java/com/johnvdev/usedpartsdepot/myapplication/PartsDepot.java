@@ -1,10 +1,12 @@
 package com.johnvdev.usedpartsdepot.myapplication;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.VoiceInteractor;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -24,6 +26,7 @@ import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -34,8 +37,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class PartsDepot extends AppCompatActivity {
@@ -52,7 +60,6 @@ public class PartsDepot extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
 
         this.FilterOpen = true;
         this.activity = this;
@@ -72,7 +79,27 @@ public class PartsDepot extends AppCompatActivity {
         Filter.setVisibility(View.GONE);
 
         Button Search = (Button)findViewById(R.id.btnSearch);
-        Search.setOnClickListener(new FilterTogggle());
+        Search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                Spinner spYear = (Spinner)findViewById(R.id.spYear);
+                Spinner spMake = (Spinner)findViewById(R.id.spMake);
+                Spinner spModel = (Spinner)findViewById(R.id.spModel);
+                Spinner spCategory = findViewById(R.id.spCategory);
+
+                String[] search = new String[4];
+                search[0] = spYear.getSelectedItem().toString();
+                search[1] = spMake.getSelectedItem().toString();
+                search[2] = spModel.getSelectedItem().toString();
+
+                setParts sp = new setParts(search, spCategory.getSelectedItem().toString());
+                sp.execute();
+
+                new FilterTogggle().onClick(view);
+            }
+        });
 
 
 
@@ -86,7 +113,7 @@ public class PartsDepot extends AppCompatActivity {
         list.add("Body");
         ArrayAdapter<String> padapter = new ArrayAdapter<String>(
                 this, R.layout.spinner_item, list);
-        Spinner sp = (Spinner)findViewById(R.id.spinner2) ;
+        Spinner sp = (Spinner)findViewById(R.id.spCategory) ;
         sp.setAdapter(padapter);
 
 
@@ -116,104 +143,13 @@ public class PartsDepot extends AppCompatActivity {
         fname.setText(preferences.getString("nameKey","Missing"));
 
 
-        partList = new ArrayList<>();
-        recyclerView = (RecyclerView)findViewById(R.id.rvParts);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        partList.add(
-                new ListPart(
-                        1,
-                        "Right Front Flex Line - OEM",
-                        "Un-used still in package, no warranty",
-                        4.3,
-                        170,
-                        R.drawable.ic_menu_camera));
 
-        partList.add(
-                new ListPart(
-                        1,
-                        "Left Front Caliper - Power Stop",
-                        "Used from 09",
-                        4.3,
-                        80,
-                        R.drawable.ic_menu_camera));
-        partList.add(
-                new ListPart(
-                        1,
-                        "Left Front Caliper - Power Stop",
-                        "Used from 09",
-                        4.3,
-                        80,
-                        R.drawable.ic_menu_camera));
-        partList.add(
-                new ListPart(
-                        1,
-                        "Left Front Caliper - Power Stop",
-                        "Used from 09",
-                        4.3,
-                        80,
-                        R.drawable.ic_menu_camera));
-        partList.add(
-                new ListPart(
-                        1,
-                        "Left Front Caliper - Power Stop",
-                        "Used from 09",
-                        4.3,
-                        80,
-                        R.drawable.ic_menu_camera));
-        partList.add(
-                new ListPart(
-                        1,
-                        "Left Front Caliper - Power Stop",
-                        "Used from 09",
-                        4.3,
-                        80,
-                        R.drawable.ic_menu_camera));
-        partList.add(
-                new ListPart(
-                        1,
-                        "Left Front Caliper - Power Stop",
-                        "Used from 09",
-                        4.3,
-                        80,
-                        R.drawable.ic_menu_camera));
-        partList.add(
-                new ListPart(
-                        1,
-                        "Left Front Caliper - Power Stop",
-                        "Used from 09",
-                        4.3,
-                        80,
-                        R.drawable.ic_menu_camera));
-        partList.add(
-                new ListPart(
-                        1,
-                        "Left Front Caliper - Power Stop",
-                        "Used from 09",
-                        4.3,
-                        80,
-                        R.drawable.ic_menu_camera));
-        partList.add(
-                new ListPart(
-                        1,
-                        "Left Front Caliper - Power Stop",
-                        "Used from 09",
-                        4.3,
-                        80,
-                        R.drawable.ic_menu_camera));
 
-        partList.add(
-                new ListPart(
-                        1,
-                        "Rear wheel cylinder - MOOG",
-                        "Un-used no package",
-                        4.3,
-                        60000,
-                        R.drawable.ic_menu_camera));
 
-                adapter = new ListPartAdapter(this, partList);
-                recyclerView.setAdapter(adapter);
+
+
+
     }
 
     @Override
@@ -362,6 +298,72 @@ public class PartsDepot extends AppCompatActivity {
                 Filter.setVisibility(View.GONE);
                 FilterOpen = true;
             }
+        }
+    }
+
+    private class setParts extends AsyncTask<String, String, String> {
+        String response ;
+        String[] vehicle;
+        String category;
+
+        public setParts(String[] vehicle, String category) {
+            this.vehicle = vehicle;
+            this.category = category;
+        }
+
+        @Override
+
+        protected String doInBackground(String... voids) {
+
+            String url = "http://10.0.2.2:7265/api/Parts?Vehicle="+vehicle[0]+"&Vehicle="+vehicle[1]+"&Vehicle="+vehicle[2]+"&userID=null&category="+category;
+            HashMap<String, String> params = new HashMap<>();
+            OkHttpRequest req = new OkHttpRequest();
+            try {
+                response =  req.Get(params, url);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            Gson gson = new Gson();
+            try{
+                partList = new ArrayList<>();
+                JSONArray jsonArray = new JSONArray(response);
+
+
+
+                int len = jsonArray.length();
+                for (int i = 0; i < len; ++i) {
+                    JSONObject obj = jsonArray.getJSONObject(i);
+
+                    partList.add(
+                            new ListPart(
+                                    1,
+                                    obj.getString("Title"),
+                                    obj.getString("Desc"),
+                                    4.3,
+                                    obj.getDouble("Price"),
+                                    R.drawable.ic_menu_camera));
+
+
+                }
+                recyclerView = (RecyclerView)findViewById(R.id.rvParts);
+                recyclerView.setHasFixedSize(true);
+                recyclerView.setLayoutManager(new LinearLayoutManager(activity));
+
+                adapter = new ListPartAdapter(activity, partList);
+                recyclerView.setAdapter(adapter);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
         }
     }
 
