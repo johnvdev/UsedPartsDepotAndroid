@@ -72,7 +72,7 @@ public class MyParts extends AppCompatActivity {
 
                     partList.add(
                             new ListPart(
-                                    1,
+                                    obj.getString("PartsID"),
                                     obj.getString("Title"),
                                     obj.getString("Desc"),
                                     4.3,

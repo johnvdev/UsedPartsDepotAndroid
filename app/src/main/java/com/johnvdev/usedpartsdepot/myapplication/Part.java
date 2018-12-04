@@ -3,6 +3,7 @@ package com.johnvdev.usedpartsdepot.myapplication;
 import java.util.HashMap;
 
 public class Part {
+    public String PartsID;
     public String UserID;
     public String Title;
     public String Desc;

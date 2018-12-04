@@ -1,13 +1,13 @@
 package com.johnvdev.usedpartsdepot.myapplication;
 
 public class ListPart {
-    private int id;
+    private String id;
     private String title, shortDesc;
     private double rating;
     private double price;
     private int image;
 
-    public ListPart(int id, String title, String shortDesc, double rating, double price, int image) {
+    public ListPart(String id, String title, String shortDesc, double rating, double price, int image) {
         this.id = id;
         this.title = title;
         this.shortDesc = shortDesc;
@@ -16,7 +16,7 @@ public class ListPart {
         this.image = image;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 

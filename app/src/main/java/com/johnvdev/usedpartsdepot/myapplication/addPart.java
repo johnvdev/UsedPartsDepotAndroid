@@ -123,8 +123,7 @@ public class addPart extends AppCompatActivity {
                 newPart.UserID = preferences.getString("IDKey","Missing");
                 newPart.Vehicle = spVehicle.getSelectedItem().toString().split("\\s+");
                 newPart.Category = spCategory.getSelectedItem().toString();
-
-
+                newPart.PartsID = java.util.UUID.randomUUID().toString();
 
                 PostPart post = new PostPart(newPart);
                 post.execute();

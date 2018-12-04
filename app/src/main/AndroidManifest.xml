@@ -62,6 +62,10 @@
             android:label="My Parts"
 
             android:parentActivityName=".PartsDepot" />
+        <activity
+            android:name=".PartInfo"
+            android:label="PartInfo"
+            android:parentActivityName=".PartsDepot" />
     </application>
 
 </manifest>

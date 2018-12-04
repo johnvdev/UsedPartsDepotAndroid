@@ -1,7 +1,10 @@
 package com.johnvdev.usedpartsdepot.myapplication;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.provider.Telephony;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,11 +34,21 @@ public class ListPartAdapter extends RecyclerView.Adapter<ListPartAdapter.PartVi
 
     @Override
     public void onBindViewHolder(PartViewHolder holder, int position) {
-        ListPart part = partList.get(position);
+        final ListPart part = partList.get(position);
         holder.textViewTitle.setText(part.getTitle());
         holder.textViewDesc.setText(part.getShortDesc());
         holder.textViewPrice.setText(String.valueOf(part.getPrice()));
         holder.textViewRating.setText(String.valueOf(part.getRating()));
+        holder.partCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mCtx ,
+                        PartInfo.class);
+                intent.putExtra("PART_ID", part.getId());
+                mCtx.startActivity(intent);
+
+            }
+        });
 
         holder.imageView.setImageDrawable(mCtx.getResources().getDrawable(part.getImage()));
     }
@@ -48,6 +61,7 @@ public class ListPartAdapter extends RecyclerView.Adapter<ListPartAdapter.PartVi
     class PartViewHolder extends RecyclerView.ViewHolder{
         ImageView imageView;
         TextView textViewTitle, textViewDesc, textViewRating , textViewPrice;
+        CardView partCard;
         public PartViewHolder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.imageView);
@@ -55,6 +69,7 @@ public class ListPartAdapter extends RecyclerView.Adapter<ListPartAdapter.PartVi
             textViewDesc = itemView.findViewById(R.id.textViewShortDesc);
             textViewRating = itemView.findViewById(R.id.textViewRating);
             textViewPrice = itemView.findViewById(R.id.textViewPrice);
+            partCard = itemView.findViewById(R.id.partCard);
 
 
         }
